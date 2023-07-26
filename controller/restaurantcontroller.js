@@ -98,4 +98,96 @@ async function getRestaurantByName(req, res) {
 //      })    
 // }
 
-module.exports = { addRestaurant, getAllRestaurants, getRestaurantByName }
+//  The above code is to update the city name by selecting _id
+
+// async function updateCityName(req, res) {
+//   try {
+//     const { id, newCityName } = req.body;
+
+//     // Find the restaurant by id
+//     const restaurant = await restaurantSchema.findById(id);
+
+//     if (!restaurant) {
+//       return res.status(404).json({ error: 'Restaurant not found' });
+//     }
+
+//     // Update the city_name field
+//     restaurant.city_name = newCityName;
+
+//     // Save the updated record to the database
+//     const updatedRestaurant = await restaurant.save();
+//     res.status(200).json(updatedRestaurant);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'An error occurred while updating the restaurant data.' });
+//   }
+// }
+
+//  The above code is to update the city name by selecting _id (this is the alterante method)
+
+//async function updateCityName(req, res) {
+//  try {
+//    const { id, newCityName } = req.body;
+//
+//    // Find the restaurant by id and update the city_name field
+//    const updatedRestaurant = await restaurantSchema.findOneAndUpdate(
+//      { _id: id }, // Filter to find the restaurant by _id
+//      { $set: { city_name: newCityName } }, // Update the city_name field
+//      { new: true } // Return the updated document in the response
+//    );
+//
+//    if (!updatedRestaurant) {
+//      return res.status(404).json({ error: 'Restaurant not found' });
+//    }
+//
+//    res.status(200).json(updatedRestaurant);
+//  } catch (error) {
+//    console.error(error);
+//    res.status(500).json({ error: 'An error occurred while updating the restaurant data.' });
+//  }
+//}
+
+// The above code is to update the city name by selecting the restaurant name i.e. name 
+
+async function updateCityName(req, res) {
+  try {
+    const { name, newCityName } = req.body;
+
+    // Find the restaurant by name
+    const restaurant = await restaurantSchema.findOne({ name });
+
+    if (!restaurant) {
+      return res.status(404).json({ error: 'Restaurant not found' });
+    }
+
+    // Update the city_name field
+    restaurant.city_name = newCityName;
+
+    // Save the updated record to the database
+    const updatedRestaurant = await restaurant.save();
+    res.status(200).json(updatedRestaurant);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating the restaurant data.' });
+  }
+}
+
+async function deleteRestaurantByName(req, res) {
+  try {
+    const { name } = req.body;
+
+    // Find the restaurant by name
+    const restaurant = await restaurantSchema.findOneAndDelete({ name });
+
+    if (!restaurant) {
+      return res.status(404).json({ error: 'Restaurant not found' });
+    }
+
+    res.status(200).json({ message: 'Restaurant deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while deleting the restaurant.' });
+  }
+}
+
+module.exports = { addRestaurant, getAllRestaurants, getRestaurantByName, updateCityName, deleteRestaurantByName}
